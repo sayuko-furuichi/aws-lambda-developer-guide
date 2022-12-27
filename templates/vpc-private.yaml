@@ -1,5 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Resources:
+# localhostはこれかな？
   privateVPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -7,6 +8,7 @@ Resources:
       Tags:
         - Key: Name
           Value: !Ref AWS::StackName
+
   privateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -20,6 +22,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join ["-", [!Ref "AWS::StackName","subnet-a"]]
+       
+          # これっぽい？
   privateSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
@@ -33,6 +37,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join ["-", [!Ref "AWS::StackName","subnet-b"]]
+
+          # Route Table
   privateRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -47,6 +53,7 @@ Resources:
     Properties:
       SubnetId: !Ref privateSubnet2
       RouteTableId: !Ref privateRouteTable
+      # S3
   s3Endpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
@@ -59,10 +66,12 @@ Resources:
             - "s3:*"
           Resource:
             - "*"
+            
       RouteTableIds:
         - !Ref privateRouteTable
       ServiceName: !Sub com.amazonaws.${AWS::Region}.s3
       VpcId: !Ref privateVPC
+
   dynamoDBEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
@@ -79,6 +88,7 @@ Resources:
         - !Ref privateRouteTable
       ServiceName: !Sub com.amazonaws.${AWS::Region}.dynamodb
       VpcId: !Ref privateVPC
+
 Outputs:
   privateVPCID:
     Description: VPC ID

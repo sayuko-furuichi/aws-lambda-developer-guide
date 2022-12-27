@@ -1,35 +1,41 @@
 package example;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
+import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.S3Event;
-
 import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification.S3EventNotificationRecord;
-
+// JAVA のオブジェクトとJSON形式を相互に変換してくれるライブラリ
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 // Handler value: example.Handler
-public class HandlerS3 implements RequestHandler<S3Event, String>{
-    private static final Logger logger = LoggerFactory.getLogger(HandlerS3.class);
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    @Override
-    public String handleRequest(S3Event event, Context context)
-    {
-        String response = new String("200 OK");
-        S3EventNotificationRecord record = event.getRecords().get(0);
-        String srcBucket = record.getS3().getBucket().getName();
-        // Object key may have spaces or unicode non-ASCII characters.
-        String srcKey = record.getS3().getObject().getUrlDecodedKey();
-        logger.info("RECORD: " + record);
-        logger.info("SOURCE BUCKET: " + srcBucket);
-        logger.info("SOURCE KEY: " + srcKey);
-        // log execution details
-        Util.logEnvironment(event, context, gson);
-        return response;
-    }
+public class HandlerS3 implements RequestHandler<S3Event, String> {
+
+  private static final Logger logger = LoggerFactory.getLogger(HandlerS3.class);
+  Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+  @Override
+  public String handleRequest(S3Event event, Context context) {
+    String response = new String("200 OK");
+
+    S3EventNotificationRecord record = event.getRecords().get(0);
+    
+    String srcBucket = record.getS3().getBucket().getName();
+    // Object key may have spaces or unicode non-ASCII characters.
+    String srcKey = record.getS3().getObject().getUrlDecodedKey();
+    
+    //TODO: S3からDLする処理
+    //TODO: メールを展開する処理
+
+    logger.info("RECORD: " + record);
+    logger.info("SOURCE BUCKET: " + srcBucket);
+    logger.info("SOURCE KEY: " + srcKey);
+    // log execution details
+    
+    Util.logEnvironment(event, context, gson);
+    return response;
+  }
 }
